@@ -15,16 +15,16 @@ socket.addEventListener("open", (event) => {
   console.log(`Opened connection to ${event.target.url}`);
 });
 
-socket.addEventListener("message", (event) => {
-  handleMessage(event.data);
-});
-
 socket.addEventListener("close", (event) => {
   console.log("Disconnected from WebSocket server");
 });
 
 socket.addEventListener("error", (event) => {
   console.error("Error: " + event);
+});
+
+socket.addEventListener("message", (event) => {
+  handleMessage(event.data);
 });
 
 function handleMessage(message) {
@@ -35,6 +35,7 @@ function handleMessage(message) {
   messageLogger(message);
   const json = JSON.parse(message);
   const container = document.querySelector("#cards");
+
   if (json.type === "GAME_ROUND") {
     for (let card of json.hand) {
       const cardElement = document.createElement("card-element");
@@ -50,9 +51,11 @@ function messageLogger(message) {
   output.appendChild(messageElement);
 }
 
-/**
- * CARD STUFF
- * */
+/*
+ **************
+ * CARD STUFF *
+ **************
+ */
 
 /**
  * CARD TYPES
@@ -60,26 +63,39 @@ function messageLogger(message) {
 
 /**
  * @typedef {Object} Card
- * @property {string} suit
- * @property {string} value
+ * @property {CSuit} suit
+ * @property {CValue} value
+ * */
+
+/**
+ *  @typedef {("Hearts"|"Spades"|"Diamonds"|"Clubs")} CSuit
+ * */
+
+/**
+ * @typedef {("Ace"|"2"|"3"|"4"|"5"|"6"|"7"|"8"|"9"|"10"|"Jack"|"Queen"|"King")} CValue
  * */
 
 /**
  * CARD COMPONENT
  * */
 
-const cardTemplate = document.createElement("template");
+const cardHTMLTemplate = document.createElement("template");
 
-cardTemplate.innerHTML = `
-    <style></style>
+cardHTMLTemplate.innerHTML = `
+    <style>
+      .card{
+        font-size: 30px; 
+        color: black;
+        margin: 5px;
+    }
+    </style>
     <div class="card">
-        <p>Suit: <span id="suit"></span></p>
-        <p>Value: <span id="value"></span></p>
+        <span id="value"></span>
     </div>
 `;
 
 /**
- * The HTML component of a Card
+ * Card component
  * @extends {HTMLElement}
  * */
 class Card extends HTMLElement {
@@ -88,17 +104,22 @@ class Card extends HTMLElement {
 
     const shadow = this.attachShadow({ mode: "open" });
 
-    shadow.appendChild(cardTemplate.content.cloneNode(true));
-    this.suitElement = shadow.getElementById("suit");
+    shadow.appendChild(cardHTMLTemplate.content.cloneNode(true));
+    //  this.suitElement = shadow.getElementById("suit");
     this.valueElement = shadow.getElementById("value");
   }
+
   /**
    * @param {string} cardStr
    */
   set card(cardStr) {
     const c = parseCard(cardStr);
-    this.suitElement.textContent = c.suit;
-    this.valueElement.textContent = c.value;
+    // this.suitElement.textContent = c.suit;
+    this.valueElement.textContent = cardUnicodeMap[cardStr];
+
+    if (c.suit === "Hearts" || c.suit === "Diamonds") {
+      this.shadowRoot.querySelector(".card").style.color = "red";
+    }
   }
 }
 customElements.define("card-element", Card);
@@ -118,7 +139,7 @@ function parseCard(card) {
 
 /**
  * @param {string} card
- * @returns {string}
+ * @returns {CSuit}
  * */
 
 function parseSuit(card) {
@@ -160,3 +181,58 @@ function parseValue(card) {
   }
   return val;
 }
+
+const cardUnicodeMap = {
+  S1: "🂡",
+  S2: "🂢",
+  S3: "🂣",
+  S4: "🂤",
+  S5: "🂥",
+  S6: "🂦",
+  S7: "🂧",
+  S8: "🂨",
+  S9: "🂩",
+  S10: "🂪",
+  S11: "🂫",
+  S12: "🂭",
+  S13: "🂮",
+  H1: "🂱",
+  H2: "🂲",
+  H3: "🂳",
+  H4: "🂴",
+  H5: "🂵",
+  H6: "🂶",
+  H7: "🂷",
+  H8: "🂸",
+  H9: "🂹",
+  H10: "🂺",
+  H11: "🂻",
+  H12: "🂽",
+  H13: "🂾",
+  D1: "🃁",
+  D2: "🃂",
+  D3: "🃃",
+  D4: "🃄",
+  D5: "🃅",
+  D6: "🃆",
+  D7: "🃇",
+  D8: "🃈",
+  D9: "🃉",
+  D10: "🃊",
+  D11: "🃋",
+  D12: "🃍",
+  D13: "🃎",
+  C1: "🃑",
+  C2: "🃒",
+  C3: "🃓",
+  C4: "🃔",
+  C5: "🃕",
+  C6: "🃖",
+  C7: "🃗",
+  C8: "🃘",
+  C9: "🃙",
+  C10: "🃚",
+  C11: "🃛",
+  C12: "🃝",
+  C13: "🃞",
+};
