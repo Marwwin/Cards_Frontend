@@ -1,3 +1,34 @@
+/*********
+ * TYPES *
+ *********/
+
+/** @typedef {Array<Card>} CardPile */
+
+/**
+ * @typedef {Object} Player
+ * @property {string} id
+ * */
+
+/**
+ *  @typedef {Object} Game
+ *  @property {WebSocket} socket
+ *
+ * */
+
+/**
+ * @typedef {Object} Card
+ * @property {CSuit} suit
+ * @property {CValue} value
+ * */
+
+/**
+ *  @typedef {("Hearts"|"Spades"|"Diamonds"|"Clubs")} CSuit
+ * */
+
+/**
+ * @typedef {("Ace"|"2"|"3"|"4"|"5"|"6"|"7"|"8"|"9"|"10"|"Jack"|"Queen"|"King")} CValue
+ * */
+
 /**
  * SOCKET STUFF
  * */
@@ -51,29 +82,46 @@ function messageLogger(message) {
   output.appendChild(messageElement);
 }
 
-/*
- **************
+/**************
+ * GAME STUFF *
+ **************/
+
+const gameTemplate = document.createElement("template");
+
+gameTemplate.innerHTML = `
+    <style></style>
+    <div>
+        <h2>This is the game area</h2>
+    </div>
+`;
+
+class Game extends HTMLElement {
+  /** @type {WebSocket}*/
+  #socket;
+  /** @type {Array<Player>}*/
+  #players;
+  /** @type {CardPile}*/
+  #deck;
+  /** @type {CardPile}*/
+  #discardPile;
+
+  constructor() {
+    super();
+
+    const shadow = this.attachShadow({ mode: "open" });
+    shadow.appendChild(gameTemplate.content.cloneNode(true));
+  }
+
+  /** Initializes the game 
+   **/
+  init() {}
+  reset() {}
+  round() {}
+}
+
+/**************
  * CARD STUFF *
- **************
- */
-
-/**
- * CARD TYPES
- * */
-
-/**
- * @typedef {Object} Card
- * @property {CSuit} suit
- * @property {CValue} value
- * */
-
-/**
- *  @typedef {("Hearts"|"Spades"|"Diamonds"|"Clubs")} CSuit
- * */
-
-/**
- * @typedef {("Ace"|"2"|"3"|"4"|"5"|"6"|"7"|"8"|"9"|"10"|"Jack"|"Queen"|"King")} CValue
- * */
+ **************/
 
 /**
  * CARD COMPONENT
