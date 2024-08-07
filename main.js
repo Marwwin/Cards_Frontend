@@ -122,6 +122,8 @@ class Game extends HTMLElement {
   round() {}
 }
 
+customElements.define("game-element", Player);
+
 /****************
  * PLAYER STUFF *
  ****************/
@@ -147,6 +149,8 @@ class Player extends HTMLElement {
     shadow.appendChild(playerTemplate.content.cloneNode(true));
   }
 }
+
+customElements.define("player-element", Player);
 
 /**************
  * CARD STUFF *
