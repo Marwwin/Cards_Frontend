@@ -7,12 +7,7 @@
 /**
  * @typedef {Object} Player
  * @property {string} id
- * */
-
-/**
- *  @typedef {Object} Game
- *  @property {WebSocket} socket
- *
+ * @property {CardPile} hand
  * */
 
 /**
@@ -91,7 +86,7 @@ const gameTemplate = document.createElement("template");
 gameTemplate.innerHTML = `
     <style></style>
     <div>
-        <h2>This is the game area</h2>
+        <h2 id="header">This is the game area</h2>
     </div>
 `;
 
@@ -104,19 +99,53 @@ class Game extends HTMLElement {
   #deck;
   /** @type {CardPile}*/
   #discardPile;
+  /** @type {string}*/
+  #gameType;
+  /** @type {HTMLElement}*/
+  #messageBoard;
+  /** @type {HTMLElement}*/
+  #header;
 
   constructor() {
     super();
 
     const shadow = this.attachShadow({ mode: "open" });
     shadow.appendChild(gameTemplate.content.cloneNode(true));
+
+    this.#header = document.querySelector("#header");
   }
 
-  /** Initializes the game 
+  /** Initializes the game
    **/
   init() {}
   reset() {}
   round() {}
+}
+
+/****************
+ * PLAYER STUFF *
+ ****************/
+
+const playerTemplate = document.createElement("template");
+
+playerTemplate.innerHTML = `
+  <style></style>
+  <div>This is player</div>
+`;
+
+class Player extends HTMLElement {
+  /** @type {CardPile}*/
+  #hand;
+  /** @type {CardPile}*/
+  #cardsOnTable;
+  /** @type {CardPile}*/
+  #hiddenCards;
+
+  constructor() {
+    super();
+    const shadow = this.attachShadow({ mode: "open" });
+    shadow.appendChild(playerTemplate.content.cloneNode(true));
+  }
 }
 
 /**************
