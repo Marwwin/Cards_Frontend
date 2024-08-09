@@ -28,13 +28,13 @@
  * SOCKET STUFF
  * */
 
-const socket = new WebSocket("ws://localhost:8080");
+const socket = new WebSocket("ws://localhost:9502");
 
 const output = document.getElementById("output");
 const sendButton = document.querySelector("#sendButton");
 
 sendButton.addEventListener("click", () => {
-  socket.send("ping pong");
+  socket.send(JSON.stringify({msg:"START"}));
 });
 
 socket.addEventListener("open", (event) => {
@@ -76,134 +76,6 @@ function messageLogger(message) {
   messageElement.textContent = message;
   output.appendChild(messageElement);
 }
-
-/**************
- * GAME STUFF *
- **************/
-
-const gameTemplate = document.createElement("template");
-
-gameTemplate.innerHTML = `
-    <style></style>
-    <div>
-        <h2 id="header">This is the game area</h2>
-    </div>
-`;
-
-class Game extends HTMLElement {
-  /** @type {WebSocket}*/
-  #socket;
-  /** @type {Array<Player>}*/
-  #players;
-  /** @type {CardPile}*/
-  #deck;
-  /** @type {CardPile}*/
-  #discardPile;
-  /** @type {string}*/
-  #gameType;
-  /** @type {HTMLElement}*/
-  #messageBoard;
-  /** @type {HTMLElement}*/
-  #header;
-
-  constructor() {
-    super();
-
-    const shadow = this.attachShadow({ mode: "open" });
-    shadow.appendChild(gameTemplate.content.cloneNode(true));
-
-    this.#header = document.querySelector("#header");
-  }
-
-  /** Initializes the game
-   **/
-  init() {}
-  reset() {}
-  round() {}
-}
-
-customElements.define("game-element", Player);
-
-/****************
- * PLAYER STUFF *
- ****************/
-
-const playerTemplate = document.createElement("template");
-
-playerTemplate.innerHTML = `
-  <style></style>
-  <div>This is player</div>
-`;
-
-class Player extends HTMLElement {
-  /** @type {CardPile}*/
-  #hand;
-  /** @type {CardPile}*/
-  #cardsOnTable;
-  /** @type {CardPile}*/
-  #hiddenCards;
-
-  constructor() {
-    super();
-    const shadow = this.attachShadow({ mode: "open" });
-    shadow.appendChild(playerTemplate.content.cloneNode(true));
-  }
-}
-
-customElements.define("player-element", Player);
-
-/**************
- * CARD STUFF *
- **************/
-
-/**
- * CARD COMPONENT
- * */
-
-const cardHTMLTemplate = document.createElement("template");
-
-cardHTMLTemplate.innerHTML = `
-    <style>
-      .card{
-        font-size: 30px; 
-        color: black;
-        margin: 5px;
-    }
-    </style>
-    <div class="card">
-        <span id="value"></span>
-    </div>
-`;
-
-/**
- * Card component
- * @extends {HTMLElement}
- * */
-class Card extends HTMLElement {
-  constructor() {
-    super();
-
-    const shadow = this.attachShadow({ mode: "open" });
-
-    shadow.appendChild(cardHTMLTemplate.content.cloneNode(true));
-    //  this.suitElement = shadow.getElementById("suit");
-    this.valueElement = shadow.getElementById("value");
-  }
-
-  /**
-   * @param {string} cardStr
-   */
-  set card(cardStr) {
-    const c = parseCard(cardStr);
-    // this.suitElement.textContent = c.suit;
-    this.valueElement.textContent = cardUnicodeMap[cardStr];
-
-    if (c.suit === "Hearts" || c.suit === "Diamonds") {
-      this.shadowRoot.querySelector(".card").style.color = "red";
-    }
-  }
-}
-customElements.define("card-element", Card);
 
 /**
  * CARD UTIL FUNCTIONS
